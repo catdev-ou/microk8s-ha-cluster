@@ -5,40 +5,40 @@
 
   tasks:
 
-      - name: "add node node-2"
+      - name: "add node-2"
         shell: /snap/bin/microk8s.add-node | grep 10.0.0.2 | cut -d'/' -f2
-        register: k8s_token_node-2
+        register: k8s_token_node_2
         changed_when: false
 
-      - name: "add node node-3"
+      - name: "add node-3"
         shell: /snap/bin/microk8s.add-node | grep 10.0.0.2 | cut -d'/' -f2
-        register: k8s_token_node-3
+        register: k8s_token_node_3
         changed_when: false
 
       - name: "add k8s token to dummy host"
         add_host:
             name: "K8S_TOKEN_HOLDER"
-            token_node-2: "{{ k8s_token_node-2.stdout }}"
-            token_node-3: "{{ k8s_token_node-3.stdout }}"
+            token_node_2: "{{ k8s_token_node_2.stdout }}"
+            token_node_3: "{{ k8s_token_node_3.stdout }}"
 
 - hosts: node-2
   gather_facts: "no"
 
   tasks:
 
-      - name: "join node node-2"
+      - name: "join node-2"
         shell: >
             /snap/bin/microk8s.join
-            10.0.0.2:25000/{{ hostvars['K8S_TOKEN_HOLDER']['token_node-2'] }}
-        when: hostvars['K8S_TOKEN_HOLDER']['token_node-2'] != ""
+            10.0.0.2:25000/{{ hostvars['K8S_TOKEN_HOLDER']['token_node_2'] }}
+        when: hostvars['K8S_TOKEN_HOLDER']['token_node_2'] != ""
 
 - hosts: node-3
   gather_facts: "no"
 
   tasks:
 
-      - name: "join node node-3"
+      - name: "join node-3"
         shell: >
             /snap/bin/microk8s.join
-            10.0.0.2:25000/{{ hostvars['K8S_TOKEN_HOLDER']['token_node-3'] }}
-        when: hostvars['K8S_TOKEN_HOLDER']['token_node-3'] != ""
+            10.0.0.2:25000/{{ hostvars['K8S_TOKEN_HOLDER']['token_node_3'] }}
+        when: hostvars['K8S_TOKEN_HOLDER']['token_node_3'] != ""
