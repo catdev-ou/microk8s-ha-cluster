@@ -1,0 +1,9 @@
+files/*
+!files/.keep
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+.envrc
+
+ansible/inventory/hosts

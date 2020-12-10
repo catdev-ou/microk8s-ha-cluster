@@ -1,0 +1,8 @@
+[nodes]
+%{ for index, dns in node-dns ~}
+${dns} ansible_host=${node-ip[index]} # id: ${node-id[index]}
+%{ endfor ~}
+
+
+[nodes:vars]
+loadbalancer_ip=${loadbalancer-ip}
