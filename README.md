@@ -8,10 +8,10 @@ Learn more: https://microk8s.io/docs/high-availability
 
 ## prepare hcloud
 
-* Enter hcloud WebUI
-* Create new project
-* Enter new project
-* In Access create an API Token
+* enter hcloud
+* create new project
+* enter new project
+* in access settings create an API Token
 
 ## clone repo
 
@@ -37,7 +37,7 @@ $ cd ../ansible
 $ ansible-playbook setup-cluster.yml
 ```
 
-## install Gitea to your cluster
+## install gitea in the cluster
 
 ```bash
 $ cd ansible
