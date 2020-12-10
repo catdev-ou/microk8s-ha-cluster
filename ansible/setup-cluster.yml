@@ -1,0 +1,7 @@
+# setup-cluster.yml
+---
+- import_playbook: setup/01-snap.yml
+- import_playbook: setup/02-aliases.yml
+- import_playbook: setup/03-cluster.yml
+- import_playbook: setup/04-metallb.yml
+- import_playbook: setup/05-ingress.yml
