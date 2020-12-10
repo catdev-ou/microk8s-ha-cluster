@@ -124,7 +124,7 @@ resource "hcloud_load_balancer_service" "lb1-service" {
     interval = 15
     timeout  = 10
     http {
-      domain = "git.catdev.io"
+      domain = "www.gitea.local"
     }
   }
 }
