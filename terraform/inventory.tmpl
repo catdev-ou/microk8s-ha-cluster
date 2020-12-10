@@ -1,8 +1,7 @@
 [nodes]
-%{ for index, dns in node-dns ~}
-${dns} ansible_host=${node-ip[index]} # id: ${node-id[index]}
-%{ endfor ~}
-
+${node-1-dns} ansible_host=${node-1-ip} # id: ${node-1-id}
+${node-2-dns} ansible_host=${node-2-ip} # id: ${node-2-id}
+${node-3-dns} ansible_host=${node-2-ip} # id: ${node-3-id}
 
 [nodes:vars]
 loadbalancer_ip=${loadbalancer-ip}

@@ -43,11 +43,22 @@ resource "hcloud_network_subnet" "vpc1-subnet1" {
 }
 
 # Setup server networking
-resource "hcloud_server_network" "nodes-network" {
-  count       = var.node_count
+resource "hcloud_server_network" "node-1-network" {
   network_id  = hcloud_network.vpc1.id
-  server_id   = element(hcloud_server.nodes.*.id, count.index)
-  ip          = cidrhost(hcloud_network_subnet.vpc1-subnet1.ip_range, count.index+2)
+  server_id   = hcloud_server.node-1.id
+  ip        = "10.0.0.2"
+}
+
+resource "hcloud_server_network" "node-2-network" {
+  network_id  = hcloud_network.vpc1.id
+  server_id   = hcloud_server.node-2.id
+  ip        = "10.0.0.3"
+}
+
+resource "hcloud_server_network" "node-3-network" {
+  network_id  = hcloud_network.vpc1.id
+  server_id   = hcloud_server.node-3.id
+  ip        = "10.0.0.4"
 }
 
 #
@@ -69,49 +80,41 @@ resource "hcloud_load_balancer_network" "lb1-network" {
   load_balancer_id        = hcloud_load_balancer.lb1.id
   subnet_id               = hcloud_network_subnet.vpc1-subnet1.id
   enable_public_interface = true
-  ip                      = "10.0.0.15"
+  ip                      = "10.0.0.5"
 }
 
-resource "hcloud_load_balancer_target" "lb1-targets" {
-  count            = var.node_count
+resource "hcloud_load_balancer_target" "lb1-target-node-1" {
   type             = "server"
   load_balancer_id = hcloud_load_balancer.lb1.id
-  server_id        = element(hcloud_server.nodes.*.id, count.index)
+  server_id        = hcloud_server.node-1.id
   use_private_ip   = true
+  depends_on = [
+    hcloud_server_network.node-1-network,
+    hcloud_load_balancer_network.lb1-network
+  ]
 }
 
-# resource "hcloud_load_balancer_target" "lb1-target-node-1" {
-#   type             = "server"
-#   load_balancer_id = hcloud_load_balancer.lb1.id
-#   server_id        = hcloud_server.node-1.id
-#   use_private_ip   = true
-#   depends_on = [
-#     hcloud_server_network.node-1-network,
-#     hcloud_load_balancer_network.lb1-network
-#   ]
-# }
+resource "hcloud_load_balancer_target" "lb1-target-node-2" {
+  type             = "server"
+  load_balancer_id = hcloud_load_balancer.lb1.id
+  server_id        = hcloud_server.node-2.id
+  use_private_ip   = true
+  depends_on = [
+    hcloud_server_network.node-2-network,
+    hcloud_load_balancer_network.lb1-network
+  ]
+}
 
-# resource "hcloud_load_balancer_target" "lb1-target-node-2" {
-#   type             = "server"
-#   load_balancer_id = hcloud_load_balancer.lb1.id
-#   server_id        = hcloud_server.node-2.id
-#   use_private_ip   = true
-#   depends_on = [
-#     hcloud_server_network.node-2-network,
-#     hcloud_load_balancer_network.lb1-network
-#   ]
-# }
-
-# resource "hcloud_load_balancer_target" "lb1-target-node-3" {
-#   type             = "server"
-#   load_balancer_id = hcloud_load_balancer.lb1.id
-#   server_id        = hcloud_server.node-3.id
-#   use_private_ip   = true
-#   depends_on = [
-#     hcloud_server_network.node-3-network,
-#     hcloud_load_balancer_network.lb1-network
-#   ]
-# }
+resource "hcloud_load_balancer_target" "lb1-target-node-3" {
+  type             = "server"
+  load_balancer_id = hcloud_load_balancer.lb1.id
+  server_id        = hcloud_server.node-3.id
+  use_private_ip   = true
+  depends_on = [
+    hcloud_server_network.node-3-network,
+    hcloud_load_balancer_network.lb1-network
+  ]
+}
 
 resource "hcloud_load_balancer_service" "lb1-service" {
   load_balancer_id = hcloud_load_balancer.lb1.id
@@ -133,14 +136,26 @@ resource "hcloud_load_balancer_service" "lb1-service" {
 # Servers
 #
 
-# Server amount
-variable "node_count" {
-  default  = 3
+resource "hcloud_server" "node-1" {
+  name          = "node-1"
+  image         = var.os_image
+  server_type   = var.server_type
+  location      = "nbg1"
+  ssh_keys      = [hcloud_ssh_key.access-ssh-key.id]
+  labels        = { role = "node" }
 }
 
-resource "hcloud_server" "nodes" {
-  count          = var.node_count
-  name          = "node-${count.index+1}"
+resource "hcloud_server" "node-2" {
+  name          = "node-2"
+  image         = var.os_image
+  server_type   = var.server_type
+  location      = "nbg1"
+  ssh_keys      = [hcloud_ssh_key.access-ssh-key.id]
+  labels        = { role = "node" }
+}
+
+resource "hcloud_server" "node-3" {
+  name          = "node-3"
   image         = var.os_image
   server_type   = var.server_type
   location      = "nbg1"

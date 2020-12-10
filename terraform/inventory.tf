@@ -8,9 +8,15 @@ resource "local_file" "AnsibleInventory" {
 
  content = templatefile("inventory.tmpl",
  {
-  node-dns = hcloud_server.nodes.*.name,
-  node-ip = hcloud_server.nodes.*.ipv4_address,
-  node-id = hcloud_server.nodes.*.id
+  node-1-dns = hcloud_server.node-1.name,
+  node-1-ip = hcloud_server.node-1.ipv4_address,
+  node-1-id = hcloud_server.node-1.id,
+  node-2-dns = hcloud_server.node-2.name,
+  node-2-ip = hcloud_server.node-2.ipv4_address,
+  node-2-id = hcloud_server.node-2.id,
+  node-3-dns = hcloud_server.node-3.name,
+  node-3-ip = hcloud_server.node-3.ipv4_address,
+  node-3-id = hcloud_server.node-3.id,
   loadbalancer-ip = hcloud_load_balancer.lb1.ipv4
  }
  )
