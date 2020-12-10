@@ -3,7 +3,6 @@ files/*
 **/.terraform/*
 *.tfstate
 *.tfstate.*
-*.tfvars
 .envrc
 
 ansible/inventory/hosts
